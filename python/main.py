@@ -42,7 +42,7 @@ def main():
     learn_features_train_set, learn_features_test_set, target_feature_train_set, target_feature_test_set = \
         train_test_split(learn_features_data, target_feature_data, test_size=0.3) #70% of given data used for training
     
-    rf = RandomForestClassifier(n_estimators=50)
+    rf = RandomForestClassifier(n_estimators=100)
     rf.fit(learn_features_train_set, target_feature_train_set)
     
     prediction = rf.predict(learn_features_test_set)
