@@ -1,6 +1,6 @@
 from os.path import abspath
 from flask import Flask, render_template, jsonify, request
-from main import run_classifier
+from main import *
 
 template_directory = abspath("./")
 app = Flask(__name__, template_folder=template_directory)
@@ -12,5 +12,14 @@ def index_page():
 @app.route('/run_RF', methods=['POST'])
 def run_RF():
     result = run_classifier()
-    print(result)
     return jsonify(result)
+    
+@app.route('/importances', methods=['POST'])
+def importances():
+    importances = get_importances()
+    j = jsonify(importances)
+    print("IMPORTANCES:")
+    print(importances)
+    print("JSON:")
+    print(j)
+    return j

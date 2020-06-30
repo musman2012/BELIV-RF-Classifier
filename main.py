@@ -2,7 +2,8 @@ import csv
 import pandas
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-print("Hello World")
+
+feature_importances = []
 
 def csv_to_dict(csv_contents):
     csv_dict_list = []
@@ -17,6 +18,7 @@ def csv_to_dict(csv_contents):
 
 target_feature = "country"
 def run_classifier():
+    global feature_importances
     #Read csv file
     csv_contents = pandas.read_csv("data/vatanen.csv")
     learn_features = []
@@ -45,7 +47,20 @@ def run_classifier():
     rf = RandomForestClassifier(n_estimators=100)
     rf.fit(learn_features_train_set, target_feature_train_set)
     
+    feature_importances = pandas.DataFrame(rf.feature_importances_, index = learn_features, \
+                            columns = ["importance"]).sort_values("importance", ascending = False)
+    
     prediction = rf.predict(learn_features_test_set)
     
     results = { i : prediction[i] for i in range(len(prediction))}
     return results
+    
+def get_importances():
+    n = 5
+    most_important_features = feature_importances.head(n)
+    most_important_feature_names = most_important_features.axes[0].values.tolist()
+    importance_values = most_important_features.values.tolist()
+    #Flatten list
+    importance_values = [value for sublist in importance_values for value in sublist]
+    importances = { most_important_feature_names[i] : importance_values[i] for i in range(n)}
+    return importances
