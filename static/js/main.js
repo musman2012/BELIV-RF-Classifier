@@ -6,7 +6,8 @@ function(event)
 	open_tab(event, "details_tab");
 },
 false);
-
+document.getElementById("details_tab").style.display = "block";
+document.getElementById("details_tab_button").className += " active";
 document.getElementById("vis_tab_button").addEventListener("click",
 function(event)
 {
@@ -16,7 +17,6 @@ false);
 
 
 var grid = new Muuri('.grid');
-
 
 function open_tab(event, tab)
 {
@@ -65,7 +65,14 @@ function get_importances()
 		dataType: "json",
 		success: function(data)
 		{
-			console.log(data)
+			var importances_list = document.getElementById("importances_list")
+			for([key, value] of Object.entries(data))
+			{
+				var list_node = document.createElement("li");
+				var text_node = document.createTextNode(`${key}:${value}`);
+				list_node.appendChild(text_node);
+				importances_list.appendChild(list_node);
+			}
 		},
 		error: function(request, status, error)
 		{
