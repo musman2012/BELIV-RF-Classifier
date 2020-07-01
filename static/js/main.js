@@ -1,13 +1,11 @@
 document.getElementById("run_RF_button").addEventListener("click", call_RF, false);
-document.getElementById("importances_button").addEventListener("click", get_importances, false);
 document.getElementById("details_tab_button").addEventListener("click", 
 function(event)
 {
 	open_tab(event, "details_tab");
 },
 false);
-document.getElementById("details_tab").style.display = "block";
-document.getElementById("details_tab_button").className += " active";
+
 document.getElementById("vis_tab_button").addEventListener("click",
 function(event)
 {
@@ -15,8 +13,44 @@ function(event)
 },
 false);
 
+document.getElementById("details_tab").style.display = "block";
+document.getElementById("details_tab_button").className += " active";
+document.getElementsByClassName("outcome")[0].className += " active";
 
-var grid = new Muuri('.grid');
+var outcomes = document.querySelectorAll(".outcome");
+outcomes.forEach(
+	function(element)
+	{
+		element.addEventListener("click",
+			function()
+			{
+				toggle_active_outcome(element);
+			}
+		);
+	}
+);
+
+
+function toggle_active_outcome(outcome)
+{
+	if(outcome.className.includes(" active"))
+	{
+		outcome.className = outcome.className.replace(" active", "");
+	}
+	else
+	{
+		outcome.className += " active";
+	}
+}
+
+
+var container = new Muuri('.grid',
+{
+	layoutDuration: 400,
+	dragEnabled: true,
+	dragSortInterval: 0
+}
+);
 
 function open_tab(event, tab)
 {
@@ -32,8 +66,11 @@ function open_tab(event, tab)
 		tab_links[i].className = tab_links[i].className.replace(" active", "");
 	}
 	
-	document.getElementById(tab).style.display = "block"
+	document.getElementById(tab).style.display = "flex"
 	event.currentTarget.className += " active";
+	
+	container.refreshItems();
+	container.refreshSortData();
 }
 
 function call_RF()
@@ -45,13 +82,14 @@ function call_RF()
 		dataType: "json",
 		success: function(data)
 		{
-			console.log(data)
+			console.log(data);
+			get_importances();
 		},
 		error: function(request, status, error)
 		{
-			console.log("ERROR:")
-			console.log(status)
-			console.log(error)
+			console.log("ERROR:");
+			console.log(status);
+			console.log(error);
 		}
 	});
 }

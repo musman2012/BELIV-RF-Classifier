@@ -12,17 +12,13 @@
 .tab button 
 {
 	background-color: inherit;
+	color: #fff;
 	float: left;
 	border: solid black 1px;
 	outline: none;
 	cursor: pointer;
 	padding: 14px 16px;
 	transition: 0.3s;
-}
-
-.tab button:hover
-{
-	background-color: #ddd;
 }
 
 .tab button.active
@@ -36,6 +32,8 @@
 	padding: 6px 12px;
 	border: 1px solid #ccc;
 	border-top: none;
+	flex-direction: column;
+	flex: 1;
 }
 
 .grid
@@ -47,8 +45,6 @@
 {
 	display: block;
 	position: absolute;
-	width: 100px;
-	height: 100px;
 	margin: 5px;
 	z-index: 1;
 	background: #ccc;
@@ -63,12 +59,21 @@
 	display: flex;
 	flex-direction: column;
 }
-
+.item.muuri-item-dragging {
+  z-index: 3;
+}
+.item.muuri-item-releasing {
+  z-index: 2;
+}
+.item.muuri-item-hidden {
+  z-index: 0;
+}
 .page
 {
 	display: flex;
 	flex-direction: row;
 	padding: 2vh 2vw 2vh 2vw;
+	height: 1000px;
 }
 
 .target_pane
@@ -76,6 +81,9 @@
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
+	background-color: #eee;
+	text-align: center;
+	padding-right: 20px;
 }
 
 .classifier_pane
@@ -84,44 +92,87 @@
 	flex-direction: column;
 	flex-grow: 4;
 }
+body
+{
+	background-color: #f9f9f9;
+}
+
+#outcomes_list
+{
+	list-style-type: none;
+	text-align: left;
+}
+
+.outcomes li.active
+{
+	background-color: #999;
+}
+
+#importance_grid
+{
+	width: 90%;
+}
 }
 </style>
+<link rel="stylesheet" href="static/css/w3.css">
+<link rel="stylesheet" href="static/css/w3-theme-black.css">
 </head>
 <body>
-<input type="button" id="run_RF_button" value="Run Classifier" style="background-color: grey"> </input>
-<input type="button" id="importances_button" value="Get Importances" style="background-color: grey"> </input>
 <div class="page">
 	<div class="target_pane">
-		<h1>TARGET</h1>
-		<p>Country (for now)</p>
+		<h1>Outcome</h1>
+		<ul id="outcomes_list">
+			<li>
+				<b>Clinical Outcomes</b>
+				<ul class="outcomes clinical_outcomes w3-ul w3-hoverable">
+					<li class="outcome clinical_outcome">Death</li>
+					<li class="outcome clinical_outcome">Recovery</li>
+				</ul>
+			</li>
+			<li>
+				<b>Provider Outcomes</b>
+				<ul class="outcomes provider_outcomes w3-ul w3-hoverable">
+					<li class="outcome provider_outcome">Referral</li>
+					<li class="outcome provider_outcome">Transferral</li>
+					<li class="outcome provider_outcome">Dissection</li>
+					<li class="outcome provider_outcome">Vivisection</li>
+				</ul>
+			</li>
+			<li> <input type="button" id="run_RF_button" value="Run Classifier" style="background-color: grey"> </input> </li>
+		</ul>
 	</div>
 	
 	<div class="classifier_pane">
 		<h1>CLASSIFIER</h1>
-		<div class="tab">
-			<button class="tab_link" id="details_tab_button">Details</button>
-			<button class="tab_link" id="vis_tab_button">Visualisation</button>
-			<button class="tab_link" id="notes_tab_button">Notes</button>
-			<button class="tab_link" id="map_tab_button">Class Mappings</button>
+		<div class="tab w3-bar w3-theme w3-left-align w3-large">
+			<button class="tab_link w3-bar-item w3-hover-white" id="details_tab_button">Details</button>
+			<button class="tab_link w3-bar-item w3-hover-white" id="vis_tab_button">Visualisation</button>
+			<button class="tab_link w3-bar-item" id="notes_tab_button">Notes</button>
+			<button class="tab_link w3-bar-item" id="map_tab_button">Class Mappings</button>
 		</div>
 
 		<div id="details_tab" class="tab_content">
 		<h2>DETAILS</h2>
 		</div>
 
-		<div id="vis_tab" class="tab_content">
-			<div class="grid">
-				<div class="item">
-					<div class="item-content">
-						<div>
-						<p>Importances:</p>
-						<ul id="importances_list">
-						
-						</ul>
-						</div>
+		<div id="vis_tab" class="grid tab_content">
+			<div id="image_grid" class="item">
+				<div class="item-content">
+				<img src="static/viscard.png" width=600px height=400px>
+				</div>
+			</div>
+		
+			<div id="importance_grid" class="item">
+				<div class="item-content">
+					<div>
+					<p>Importances:</p>
+					<ul id="importances_list">
+					
+					</ul>
 					</div>
 				</div>
 			</div>
+			
 		</div>
 
 		<div id="notes_tab" class="tab_content">
