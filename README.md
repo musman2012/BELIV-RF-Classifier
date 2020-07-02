@@ -6,9 +6,9 @@ The application uses a combination of Python and web technologies. In order to r
 - Sklearn
 
 These can all be installed with the pip installer. To use the installer, run the following commands in a cmd terminal:
-$ py -m pip install flask
-$ py -m pip install pandas
-$ py -m pip install sklearn
+- $ py -m pip install flask
+- $ py -m pip install pandas
+- $ py -m pip install sklearn
 The py command has been used in a windows cmd terminal, but using the pip installer may require slightly different commands on your system. Once these have been installed, the repo can be cloned and the application run.
 
 To summarise the necessary installation steps:
