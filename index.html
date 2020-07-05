@@ -112,7 +112,6 @@ body
 {
 	width: 90%;
 }
-}
 </style>
 <link rel="stylesheet" href="static/css/w3.css">
 <link rel="stylesheet" href="static/css/w3-theme-black.css">
@@ -138,12 +137,12 @@ body
 					<li class="outcome provider_outcome">Vivisection</li>
 				</ul>
 			</li>
-			<li> <input type="button" id="run_RF_button" value="Run Classifier" style="background-color: grey"> </input> </li>
+			<li> <input type="button" id="run_RF_button" value="Find Predictors" style="background-color: grey"> </input> </li>
 		</ul>
 	</div>
 	
 	<div class="classifier_pane">
-		<h1>CLASSIFIER</h1>
+		<h1>VisualRF</h1>
 		<div class="tab w3-bar w3-theme w3-left-align w3-large">
 			<button class="tab_link w3-bar-item w3-hover-white" id="details_tab_button">Details</button>
 			<button class="tab_link w3-bar-item w3-hover-white" id="vis_tab_button">Visualisation</button>
@@ -151,17 +150,7 @@ body
 			<button class="tab_link w3-bar-item" id="map_tab_button">Class Mappings</button>
 		</div>
 
-		<div id="details_tab" class="tab_content">
-		<h2>DETAILS</h2>
-		</div>
-
-		<div id="vis_tab" class="grid tab_content">
-			<div id="image_grid" class="item">
-				<div class="item-content">
-				<img src="static/viscard.png" width=600px height=400px>
-				</div>
-			</div>
-		
+		<div id="details_tab" class="grid tab_content">
 			<div id="importance_grid" class="item">
 				<div class="item-content">
 					<div>
@@ -170,6 +159,14 @@ body
 					
 					</ul>
 					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="vis_tab" class="grid tab_content">
+			<div id="image_grid" class="item">
+				<div class="item-content">
+				<img src="static/viscard.png" width=600px height=400px>
 				</div>
 			</div>
 			

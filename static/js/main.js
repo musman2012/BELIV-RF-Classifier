@@ -33,18 +33,24 @@ outcomes.forEach(
 
 function toggle_active_outcome(outcome)
 {
-	if(outcome.className.includes(" active"))
+	var contents = document.getElementsByClassName("outcome");
+	for(var i = 0; i < contents.length; i++)
 	{
-		outcome.className = outcome.className.replace(" active", "");
+		contents[i].className = contents[i].className.replace(" active", "");
 	}
-	else
-	{
-		outcome.className += " active";
-	}
+	outcome.className += " active";
 }
 
 
-var container = new Muuri('.grid',
+var container = new Muuri('#vis_tab',
+{
+	layoutDuration: 400,
+	dragEnabled: true,
+	dragSortInterval: 0
+}
+);
+
+var container_0 = new Muuri('#details_tab',
 {
 	layoutDuration: 400,
 	dragEnabled: true,
