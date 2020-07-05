@@ -41,22 +41,8 @@ function toggle_active_outcome(outcome)
 	outcome.className += " active";
 }
 
-
-var container = new Muuri('#vis_tab',
-{
-	layoutDuration: 400,
-	dragEnabled: true,
-	dragSortInterval: 0
-}
-);
-
-var container_0 = new Muuri('#details_tab',
-{
-	layoutDuration: 400,
-	dragEnabled: true,
-	dragSortInterval: 0
-}
-);
+var container = null;
+var container_0 = null;
 
 function open_tab(event, tab)
 {
@@ -75,8 +61,29 @@ function open_tab(event, tab)
 	document.getElementById(tab).style.display = "flex"
 	event.currentTarget.className += " active";
 	
-	container.refreshItems();
-	container.refreshSortData();
+	if(tab === "vis_tab")
+	{
+		if(container === null)
+		{
+container = new Muuri('#vis_tab',
+{
+	layoutDuration: 400,
+	dragEnabled: true,
+	dragSortInterval: 0
+}
+);
+		}
+		if(container_0 === null)
+		{
+container_0 = new Muuri('#details_tab',
+{
+	layoutDuration: 400,
+	dragEnabled: true,
+	dragSortInterval: 0
+}
+);
+		}
+	}
 }
 
 function call_RF()
