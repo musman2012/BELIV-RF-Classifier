@@ -1,5 +1,5 @@
 from os.path import abspath
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 from main import *
 
 template_directory = abspath("./")
@@ -23,3 +23,7 @@ def importances():
     print("JSON:")
     print(j)
     return j
+    
+@app.route('/data/<string:file_name>', methods=['GET'])
+def load_data_file(file_name):
+    return send_from_directory("data", file_name)

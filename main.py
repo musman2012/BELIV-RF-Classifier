@@ -64,3 +64,9 @@ def get_importances():
     importance_values = [value for sublist in importance_values for value in sublist]
     importances = { most_important_feature_names[i] : importance_values[i] for i in range(n)}
     return importances
+    
+def load_file(file_name):
+    file = open(file_name, "r")
+    contents = file.read()
+    file.close()
+    return contents
