@@ -42,6 +42,22 @@ function toggle_active_outcome(outcome)
 
 var container = null;
 
+function create_vis_cards()
+{
+	if(container === null)
+	{
+		container = new Muuri('#vis_tab',
+		{
+			layoutDuration: 400,
+			dragEnabled: true,
+			dragSortInterval: 0
+		}
+		);
+	}
+	container.refreshItems();
+	container.layout(true);
+}
+
 function open_tab(event, tab)
 {
 	var tab_contents = document.getElementsByClassName("tab_content");
@@ -61,16 +77,7 @@ function open_tab(event, tab)
 	
 	if(tab === "vis_tab")
 	{
-		if(container === null)
-		{
-			container = new Muuri('#vis_tab',
-			{
-				layoutDuration: 400,
-				dragEnabled: true,
-				dragSortInterval: 0
-			}
-			);
-		}
+		create_vis_cards();
 	}
 }
 
@@ -85,6 +92,7 @@ function call_RF()
 		{
 			console.log(data);
 			get_importances();
+			create_map_vis();
 		},
 		error: function(request, status, error)
 		{
@@ -112,8 +120,7 @@ function get_importances()
 				list_node.appendChild(text_node);
 				importances_list.appendChild(list_node);
 			}
-			container.refreshItems();
-			container.layout(true);
+			create_vis_cards();
 		},
 		error: function(request, status, error)
 		{
@@ -124,54 +131,43 @@ function get_importances()
 	});
 }
 
-var width = 500;
-var height = 300;
-var projection = d3.geoAlbers()
-.center([0, 55.4])
-.rotate([4.4, 0])
-.parallels([50, 60])
-.scale(6000)
-.translate([width/2, height/2]);
-var svg = d3.select("#map_vis").append("svg").attr("width", width).attr("height", height);
-var path = d3.geoPath().projection(projection);
-var g = svg.append("g");
+function create_map_vis()
+{
+	var width = 500;
+	var height = 300;
+	var projection = d3.geoAlbers()
+	.center([0, 55.4])
+	.rotate([4.4, 0])
+	.parallels([50, 60])
+	.scale(6000)
+	.translate([width/2, height/2]);
+	var svg = d3.select("#map_vis").append("svg").attr("width", width).attr("height", height);
+	var path = d3.geoPath().projection(projection);
+	var g = svg.append("g");
+		
+	var zoom = d3.zoom().on("zoom", do_zoom);
+
+	function do_zoom()
+	{
+		g.attr('transform', d3.event.transform);
+	}
+	svg.call(zoom);
 	
-var zoom = d3.zoom().on("zoom", do_zoom);
+	var files = ["/data/wpc.json", "/data/mp_data.csv"];
+	var promises = [];
+	promises.push(d3.json("/data/wpc.json"));
+	promises.push(d3.csv("/data/mp_data.csv"));
+	Promise.all(promises).then(
+	function(data)
+	{
+		var boundary_data = data[0];
+		var mp_data = data[1];
 
-function do_zoom()
-{
-	g.attr('transform', d3.event.transform);
+		var b = path.bounds(topojson.feature(boundary_data, boundary_data.objects["wpc"]));
+		
+		var paths = g.selectAll("path")
+		.data(topojson.feature(boundary_data, boundary_data.objects["wpc"]).features);
+		paths.enter().append("path").attr("d", path);
+	}
+	);
 }
-svg.call(zoom);
-/*
-d3.json("/data/wpc.json").then(
-function(json_data)
-{
-	console.log(json_data);
-}
-);
-
-d3.csv("/data/mp_data.csv").then(
-function(csv_data)
-{
-	console.log(csv_data);
-}
-);
-*/
-var files = ["/data/wpc.json", "/data/mp_data.csv"];
-var promises = [];
-promises.push(d3.json("/data/wpc.json"));
-promises.push(d3.csv("/data/mp_data.csv"));
-Promise.all(promises).then(
-function(data)
-{
-	var boundary_data = data[0];
-	var mp_data = data[1];
-
-	var b = path.bounds(topojson.feature(boundary_data, boundary_data.objects["wpc"]));
-	
-	var paths = g.selectAll("path")
-	.data(topojson.feature(boundary_data, boundary_data.objects["wpc"]).features);
-	paths.enter().append("path").attr("d", path);
-}
-);
