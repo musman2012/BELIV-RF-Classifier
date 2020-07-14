@@ -1,34 +1,39 @@
-document.getElementById("run_RF_button").addEventListener("click", call_RF, false);
-document.getElementById("details_tab_button").addEventListener("click", 
-function(event)
+var container = null;
+
+function init()
 {
-	open_tab(event, "details_tab");
-},
-false);
-
-document.getElementById("vis_tab_button").addEventListener("click",
-function(event)
-{
-	open_tab(event, "vis_tab");
-},
-false);
-
-document.getElementById("details_tab").style.display = "block";
-document.getElementById("details_tab_button").className += " active";
-document.getElementsByClassName("outcome")[0].className += " active";
-
-var outcomes = document.querySelectorAll(".outcome");
-outcomes.forEach(
-	function(element)
+	document.getElementById("run_RF_button").addEventListener("click", call_RF, false);
+	document.getElementById("details_tab_button").addEventListener("click", 
+	function(event)
 	{
-		element.addEventListener("click",
-			function()
-			{
-				toggle_active_outcome(element);
-			}
-		);
-	}
-);
+		open_tab(event, "details_tab");
+	},
+	false);
+
+	document.getElementById("vis_tab_button").addEventListener("click",
+	function(event)
+	{
+		open_tab(event, "vis_tab");
+	},
+	false);
+
+	document.getElementById("details_tab").style.display = "block";
+	document.getElementById("details_tab_button").className += " active";
+	document.getElementsByClassName("outcome")[0].className += " active";
+
+	var outcomes = document.querySelectorAll(".outcome");
+	outcomes.forEach(
+		function(element)
+		{
+			element.addEventListener("click",
+				function()
+				{
+					toggle_active_outcome(element);
+				}
+			);
+		}
+	);
+}
 
 function toggle_active_outcome(outcome)
 {
@@ -38,24 +43,6 @@ function toggle_active_outcome(outcome)
 		contents[i].className = contents[i].className.replace(" active", "");
 	}
 	outcome.className += " active";
-}
-
-var container = null;
-
-function create_vis_cards()
-{
-	if(container === null)
-	{
-		container = new Muuri('#vis_tab',
-		{
-			layoutDuration: 400,
-			dragEnabled: true,
-			dragSortInterval: 0
-		}
-		);
-	}
-	container.refreshItems();
-	container.layout(true);
 }
 
 function open_tab(event, tab)
@@ -101,6 +88,29 @@ function call_RF()
 			console.log(error);
 		}
 	});
+}
+
+function should_start_drag(item, e)
+{
+	var vis_card_element_name = e.srcEvent.srcElement.tagName.toLowerCase();
+	return vis_card_element_name !== "svg" && vis_card_element_name !== "path";
+}
+
+function create_vis_cards()
+{
+	if(container === null)
+	{
+		container = new Muuri('#vis_tab',
+		{
+			layoutDuration: 400,
+			dragEnabled: true,
+			dragSortInterval: 0,
+			dragStartPredicate: should_start_drag
+		}
+		);
+	}
+	container.refreshItems();
+	container.layout(true);
 }
 
 function get_importances()
@@ -171,3 +181,5 @@ function create_map_vis()
 	}
 	);
 }
+
+init();
