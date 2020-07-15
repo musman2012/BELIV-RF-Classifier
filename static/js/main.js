@@ -19,20 +19,53 @@ function init()
 
 	document.getElementById("details_tab").style.display = "block";
 	document.getElementById("details_tab_button").className += " active";
-	document.getElementsByClassName("outcome")[0].className += " active";
 
-	var outcomes = document.querySelectorAll(".outcome");
-	outcomes.forEach(
-		function(element)
+	d3.json("/data/outcomes.json").then
+	(
+		function(data)
 		{
-			element.addEventListener("click",
-				function()
+			var clinical_outcomes_list = document.getElementById("clinical_outcomes");
+			var provider_outcomes_list = document.getElementById("provider_outcomes");
+			var clinical_outcomes = data.clinical_outcomes;
+			var provider_outcomes = data.provider_outcomes;
+			clinical_outcomes.forEach
+			(
+				function(outcome)
 				{
-					toggle_active_outcome(element);
+					var node = document.createElement("li");
+					node.setAttribute("class", "outcome");
+					node.appendChild(document.createTextNode(outcome));
+					clinical_outcomes_list.append(node);
 				}
 			);
+			provider_outcomes.forEach
+			(
+				function(outcome)
+				{
+					var node = document.createElement("li");
+					node.setAttribute("class", "outcome");
+					node.appendChild(document.createTextNode(outcome));
+					provider_outcomes_list.append(node);
+				}
+			);
+			var outcomes = document.querySelectorAll(".outcome");
+			outcomes.forEach
+			(
+				function(element)
+				{
+					element.addEventListener("click",
+						function()
+						{
+							toggle_active_outcome(element);
+						}
+					);
+				}
+			);
+			outcomes[0].className += " active";
 		}
 	);
+	
+
 }
 
 function toggle_active_outcome(outcome)

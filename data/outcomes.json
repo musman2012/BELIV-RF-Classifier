@@ -1,0 +1,4 @@
+{
+	"clinical_outcomes": ["Country", "Death", "Life"],
+	"provider_outcomes": ["Referred", "Deferred", "Autopsy"]
+}
