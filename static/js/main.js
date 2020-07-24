@@ -105,6 +105,7 @@ function open_tab(event, tab)
 function call_RF()
 {
 	var target_feature = d3.selectAll(".outcome").filter(".active").text();
+	var number_of_predictors = d3.select("#number_of_predictors_picker").property("value");
 	$.ajax(
 	{
 		type: "POST",
@@ -113,7 +114,7 @@ function call_RF()
 		success: function(data)
 		{
 			console.log(data);
-			get_importances().success
+			get_importances(number_of_predictors).success
 			(
 				function(data)
 				{
@@ -204,12 +205,12 @@ function create_vis_cards()
 	refresh_vis_card_layout();
 }
 
-function get_importances()
+function get_importances(number_of_predictors)
 {
 	return $.ajax(
 	{
 		type: "POST",
-		url: "/importances",
+		url: `/importances/${number_of_predictors}`,
 		dataType: "json",
 		error: function(request, status, error)
 		{

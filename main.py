@@ -54,8 +54,7 @@ def run_classifier(target_feature):
     results = { i : str(prediction[i]) for i in range(len(prediction))}
     return results
     
-def get_importances():
-    n = 5
+def get_importances(n):
     most_important_features = feature_importances.head(n)
     most_important_feature_names = most_important_features.axes[0].values.tolist()
     importance_values = most_important_features.values.tolist()

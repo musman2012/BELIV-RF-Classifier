@@ -14,9 +14,9 @@ def run_RF(target_feature):
     result = run_classifier(target_feature)
     return jsonify(result)
     
-@app.route('/importances', methods=['POST'])
-def importances():
-    importances = get_importances()
+@app.route('/importances/<int:number_of_predictors>', methods=['POST'])
+def importances(number_of_predictors):
+    importances = get_importances(number_of_predictors)
     j = jsonify(importances)
     print("IMPORTANCES:")
     print(importances)
