@@ -1,4 +1,6 @@
 var container = null;
+var uk_map_data = null;
+var constituency_data = null;
 
 function init()
 {
@@ -64,8 +66,7 @@ function init()
 			outcomes[0].className += " active";
 		}
 	);
-	
-
+	load_map_data();
 }
 
 function toggle_active_outcome(outcome)
@@ -97,7 +98,7 @@ function open_tab(event, tab)
 	
 	if(tab === "vis_tab")
 	{
-		create_vis_cards();
+		refresh_vis_card_layout();
 	}
 }
 
@@ -111,8 +112,58 @@ function call_RF()
 		success: function(data)
 		{
 			console.log(data);
-			get_importances();
-			create_map_vis();
+			get_importances().success
+			(
+				function(data)
+				{
+					var importance_list_item_content = d3.select("#vis_tab").append("div").attr("id", "importance_grid").classed("item", true).append("div").classed("item-content", true);
+					importance_list_item_content.append("p").text("Importances:");
+					importance_list_item_content.append("ul").attr("id", "importances_list");
+					//Create importances list
+					d3.select("#importances_list").selectAll("li").data(Object.entries(data)).enter().append("li")
+					.text
+					(
+						function(datum, index, nodes)
+						{
+							return `${datum[0]} : ${datum[1]}`;
+						}
+					);
+					
+					//Create individual vis cards for each important variable
+					var map_vis_cards_selection = d3.select("#vis_tab")
+					.selectAll
+					(
+						function(datum, index, nodes)
+						{
+							console.log(datum);
+							console.log(index);
+							return [];
+						}
+					).data(Object.entries(data)).enter().append("div").classed("item", true)
+					.append("div").classed("item-content", true);
+					map_vis_cards_selection.append("p")
+					.text
+					(
+						function(datum, index, nodes)
+						{
+							return `${datum[0]} : ${datum[1]}`;
+						}
+					);
+					map_vis_cards_selection.append("div").classed("map_vis", true)
+					.attr("id",
+						function(datum, index, nodes)
+						{
+							return `vis_${index}`;
+						}
+					);
+					for(var i = 0; i < Object.entries(data).length; i++)
+					{
+						draw_map_vis(uk_map_data, constituency_data, i);
+					}
+					create_vis_cards();
+				}
+			);
+
 		},
 		error: function(request, status, error)
 		{
@@ -129,6 +180,15 @@ function should_start_drag(item, e)
 	return vis_card_element_name !== "svg" && vis_card_element_name !== "path";
 }
 
+function refresh_vis_card_layout()
+{
+	if(container !== null)
+	{
+		container.refreshItems();
+		container.layout(true);
+	}
+}
+
 function create_vis_cards()
 {
 	if(container === null)
@@ -142,29 +202,16 @@ function create_vis_cards()
 		}
 		);
 	}
-	container.refreshItems();
-	container.layout(true);
+	refresh_vis_card_layout();
 }
 
 function get_importances()
 {
-	$.ajax(
+	return $.ajax(
 	{
 		type: "POST",
 		url: "/importances",
 		dataType: "json",
-		success: function(data)
-		{
-			var importances_list = document.getElementById("importances_list")
-			for([key, value] of Object.entries(data))
-			{
-				var list_node = document.createElement("li");
-				var text_node = document.createTextNode(`${key}:${value}`);
-				list_node.appendChild(text_node);
-				importances_list.appendChild(list_node);
-			}
-			create_vis_cards();
-		},
 		error: function(request, status, error)
 		{
 			console.log("ERROR:")
@@ -174,7 +221,22 @@ function get_importances()
 	});
 }
 
-function create_map_vis()
+function load_map_data()
+{
+	var files = ["/data/wpc.json", "/data/mp_data.csv"];
+	var promises = [];
+	promises.push(d3.json("/data/wpc.json"));
+	promises.push(d3.csv("/data/mp_data.csv"));
+	Promise.all(promises).then(
+	function(data)
+	{
+		uk_map_data = data[0];
+		constituency_data = data[1];
+	}
+	);
+}
+
+function draw_map_vis(boundary_data, mp_data, importance_variable)
 {
 	var width = 500;
 	var height = 300;
@@ -183,8 +245,8 @@ function create_map_vis()
 	.rotate([4.4, 0])
 	.parallels([50, 60])
 	.scale(6000)
-	.translate([width/2, height/2]);
-	var svg = d3.select("#map_vis").append("svg").attr("width", width).attr("height", height);
+	.translate([width/2, height/2]); 
+	var svg = d3.select(`#vis_${importance_variable}`).append("svg").attr("width", width).attr("height", height);
 	var path = d3.geoPath().projection(projection);
 	var g = svg.append("g");
 		
@@ -195,23 +257,16 @@ function create_map_vis()
 		g.attr('transform', d3.event.transform);
 	}
 	svg.call(zoom);
-	
-	var files = ["/data/wpc.json", "/data/mp_data.csv"];
-	var promises = [];
-	promises.push(d3.json("/data/wpc.json"));
-	promises.push(d3.csv("/data/mp_data.csv"));
-	Promise.all(promises).then(
-	function(data)
-	{
-		var boundary_data = data[0];
-		var mp_data = data[1];
 
-		var b = path.bounds(topojson.feature(boundary_data, boundary_data.objects["wpc"]));
-		
-		var paths = g.selectAll("path")
-		.data(topojson.feature(boundary_data, boundary_data.objects["wpc"]).features);
-		paths.enter().append("path").attr("d", path);
-	}
+	var b = path.bounds(topojson.feature(boundary_data, boundary_data.objects["wpc"]));
+	
+	var paths = g.selectAll("path")
+	.data(topojson.feature(boundary_data, boundary_data.objects["wpc"]).features);
+	paths.enter().append("path").attr("d", path).attr("fill",
+		function()
+		{
+			return "#ff0000";
+		}
 	);
 }
 
