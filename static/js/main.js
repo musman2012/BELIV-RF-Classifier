@@ -158,7 +158,7 @@ function call_RF()
 					);
 					for(var i = 0; i < Object.entries(data).length; i++)
 					{
-						draw_map_vis(uk_map_data, constituency_data, i);
+						draw_map_vis(uk_map_data, constituency_data, i, Object.values(data)[i]);
 					}
 					create_vis_cards();
 				}
@@ -236,7 +236,7 @@ function load_map_data()
 	);
 }
 
-function draw_map_vis(boundary_data, mp_data, importance_variable)
+function draw_map_vis(boundary_data, mp_data, importance_variable, importance_value)
 {
 	var width = 500;
 	var height = 300;
@@ -265,7 +265,10 @@ function draw_map_vis(boundary_data, mp_data, importance_variable)
 	paths.enter().append("path").attr("d", path).attr("fill",
 		function()
 		{
-			return "#ff0000";
+			var min_importance = 0.02;
+			var max_importance = 0.04;
+			var adjusted_importance_value = (importance_value - min_importance)/(max_importance - min_importance);
+			return d3.interpolateRdYlBu(1.0 - adjusted_importance_value);
 		}
 	);
 }
