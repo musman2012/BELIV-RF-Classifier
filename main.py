@@ -16,8 +16,7 @@ def csv_to_dict(csv_contents):
         csv_dict_list.append(csv_entry_dict)
     return csv_dict_list
 
-target_feature = "country"
-def run_classifier():
+def run_classifier(target_feature):
     global feature_importances
     #Read csv file
     csv_contents = pandas.read_csv("data/vatanen.csv")
@@ -52,7 +51,7 @@ def run_classifier():
     
     prediction = rf.predict(learn_features_test_set)
     
-    results = { i : prediction[i] for i in range(len(prediction))}
+    results = { i : str(prediction[i]) for i in range(len(prediction))}
     return results
     
 def get_importances():

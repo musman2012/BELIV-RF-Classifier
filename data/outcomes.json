@@ -1,4 +1,4 @@
 {
-	"clinical_outcomes": ["Country", "Death", "Life"],
-	"provider_outcomes": ["Referred", "Deferred", "Autopsy"]
+	"clinical_outcomes": ["country", "delivery", "gest_time"],
+	"provider_outcomes": ["gender", "Exclusive_breast_feeding", "Regular_formula"]
 }

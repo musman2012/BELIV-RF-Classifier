@@ -104,10 +104,11 @@ function open_tab(event, tab)
 
 function call_RF()
 {
+	var target_feature = d3.selectAll(".outcome").filter(".active").text();
 	$.ajax(
 	{
 		type: "POST",
-		url: "/run_RF",
+		url: `/run_RF/${target_feature}`,
 		dataType: "json",
 		success: function(data)
 		{
@@ -135,8 +136,6 @@ function call_RF()
 					(
 						function(datum, index, nodes)
 						{
-							console.log(datum);
-							console.log(index);
 							return [];
 						}
 					).data(Object.entries(data)).enter().append("div").classed("item", true)
@@ -265,7 +264,7 @@ function draw_map_vis(boundary_data, mp_data, importance_variable, importance_va
 	paths.enter().append("path").attr("d", path).attr("fill",
 		function()
 		{
-			var min_importance = 0.02;
+			var min_importance = 0.01;
 			var max_importance = 0.04;
 			var adjusted_importance_value = (importance_value - min_importance)/(max_importance - min_importance);
 			return d3.interpolateRdYlBu(1.0 - adjusted_importance_value);

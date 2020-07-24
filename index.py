@@ -9,9 +9,9 @@ app = Flask(__name__, template_folder=template_directory)
 def index_page():
     return render_template("index.html")
     
-@app.route('/run_RF', methods=['POST'])
-def run_RF():
-    result = run_classifier()
+@app.route('/run_RF/<string:target_feature>', methods=['POST'])
+def run_RF(target_feature):
+    result = run_classifier(target_feature)
     return jsonify(result)
     
 @app.route('/importances', methods=['POST'])
