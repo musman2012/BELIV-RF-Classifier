@@ -19,3 +19,9 @@ To summarise the necessary installation steps:
 
 To run the application, the file run.bat has been provided (ergo easily running the application can only be done on windows currently). To run the file, open a cmd terminal and navigate to the repo's root directory, then simply use "run" in the command prompt.
 The application will be running on localhost:5000.
+
+Environment Details:
+This application has been tested in an environment with the following details:
+- OS: Windows 10
+- Browser: Google Chrome 84.0.4147.89
+- Python version 3.8.3
